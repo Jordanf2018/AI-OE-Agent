@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Calendar Agent Onboarding</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom font for a clean look */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5; /* Light gray background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        /* Hide default number input arrows */
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+
+    <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-2xl">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">AI Calendar Agent Onboarding</h1>
+        <p class="text-gray-600 mb-8 text-center">Let's set up your personalized meeting orchestrator. Provide details about your jobs and preferences.</p>
+
+        <form id="onboardingForm" class="space-y-6">
+            <!-- User Information -->
+            <div>
+                <label for="userName" class="block text-sm font-medium text-gray-700 mb-1">Your Name (Optional)</label>
+                <input type="text" id="userName" name="userName"
+                       class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                       placeholder="e.g., Jane Doe">
+            </div>
+
+            <!-- Jobs and Calendars Section -->
+            <div id="jobsContainer" class="space-y-6 border border-blue-200 p-4 rounded-lg bg-blue-50">
+                <h2 class="text-xl font-semibold text-blue-800">Your Jobs & Calendars</h2>
+                <div class="job-item space-y-4 p-4 border border-blue-300 rounded-md bg-white shadow-sm">
+                    <h3 class="text-lg font-medium text-gray-800">Job 1</h3>
+                    <div>
+                        <label for="jobName_0" class="block text-sm font-medium text-gray-700 mb-1">Job Name</label>
+                        <input type="text" id="jobName_0" name="jobName_0" required
+                               class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                               placeholder="e.g., Full-time Role, Freelance Project A">
+                    </div>
+                    <div>
+                        <label for="calendarName_0" class="block text-sm font-medium text-gray-700 mb-1">Calendar Name (e.g., Google Work, Outlook Personal)</label>
+                        <input type="text" id="calendarName_0" name="calendarName_0" required
+                               class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                               placeholder="e.g., My Work Calendar, Client A Calendar">
+                    </div>
+                    <div>
+                        <label for="preferredTimes_0" class="block text-sm font-medium text-gray-700 mb-1">Preferred Meeting Times / Availability for this Job</label>
+                        <textarea id="preferredTimes_0" name="preferredTimes_0" rows="3"
+                                  class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                  placeholder="e.g., M-F 9 AM - 12 PM, T/Th afternoons, avoid Fridays"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <button type="button" id="addJobBtn"
+                    class="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-150 ease-in-out shadow-sm">
+                Add Another Job
+            </button>
+
+            <!-- Conflict Tolerance Rules -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Conflict Tolerance Rules</label>
+                <div class="mt-2 space-y-2">
+                    <div class="flex items-center">
+                        <input id="toleranceStrict" name="conflictTolerance" type="radio" value="strict" checked
+                               class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded-full">
+                        <label for="toleranceStrict" class="ml-3 block text-sm font-medium text-gray-700">Strict (Flag all overlaps, no auto-reschedule)</label>
+                    </div>
+                    <div class="flex items-center">
+                        <input id="toleranceMedium" name="conflictTolerance" type="radio" value="medium"
+                               class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded-full">
+                        <label for="toleranceMedium" class="ml-3 block text-sm font-medium text-gray-700">Medium (Flag P0/P1 overlaps, suggest P2/P3 reschedule)</label>
+                    </div>
+                    <div class="flex items-center">
+                        <input id="toleranceFlexible" name="conflictTolerance" type="radio" value="flexible"
+                               class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded-full">
+                        <label for="toleranceFlexible" class="ml-3 block text-sm font-medium text-gray-700">Flexible (Auto-reschedule P2/P3, notify only on P0/P1)</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notification Preferences -->
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Notification Preferences</label>
+                <div class="mt-2 space-y-2">
+                    <div class="flex items-center">
+                        <input id="notifyTelegram" name="notificationPreference" type="checkbox" value="telegram" checked
+                               class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded-md">
+                        <label for="notifyTelegram" class="ml-3 block text-sm font-medium text-gray-700">Telegram</label>
+                    </div>
+                    <div class="flex items-center">
+                        <input id="notifySMS" name="notificationPreference" type="checkbox" value="sms"
+                               class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded-md">
+                        <label for="notifySMS" class="ml-3 block text-sm font-medium text-gray-700">SMS (via Twilio)</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit"
+                    class="w-full bg-green-600 text-white py-3 px-4 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition duration-150 ease-in-out shadow-lg">
+                Activate Agent & Connect Calendars
+            </button>
+        </form>
+
+        <div id="formDataOutput" class="mt-8 p-4 bg-gray-50 border border-gray-200 rounded-lg hidden">
+            <h3 class="text-lg font-semibold text-gray-800 mb-2">Submitted Data:</h3>
+            <pre class="whitespace-pre-wrap text-sm text-gray-700" id="outputContent"></pre>
+            <p class="text-sm text-gray-500 mt-4">*(In a real scenario, this data would be sent to your n8n workflow for processing and storage.)*</p>
+            <p class="text-sm text-gray-500 mt-2">*(The next step would involve guiding you to connect your actual calendar accounts.)*</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const jobsContainer = document.getElementById('jobsContainer');
+            const addJobBtn = document.getElementById('addJobBtn');
+            const onboardingForm = document.getElementById('onboardingForm');
+            const formDataOutput = document.getElementById('formDataOutput');
+            const outputContent = document.getElementById('outputContent');
+            let jobCount = 1; // Start with 1 job already in the HTML
+
+            // Function to add a new job input block
+            const addJobBlock = () => {
+                const newJobItem = document.createElement('div');
+                newJobItem.className = 'job-item space-y-4 p-4 border border-blue-300 rounded-md bg-white shadow-sm';
+                newJobItem.innerHTML = `
+                    <h3 class="text-lg font-medium text-gray-800">Job ${jobCount + 1}</h3>
+                    <div>
+                        <label for="jobName_${jobCount}" class="block text-sm font-medium text-gray-700 mb-1">Job Name</label>
+                        <input type="text" id="jobName_${jobCount}" name="jobName_${jobCount}" required
+                               class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                               placeholder="e.g., Full-time Role, Freelance Project A">
+                    </div>
+                    <div>
+                        <label for="calendarName_${jobCount}" class="block text-sm font-medium text-gray-700 mb-1">Calendar Name (e.g., Google Work, Outlook Personal)</label>
+                        <input type="text" id="calendarName_${jobCount}" name="calendarName_${jobCount}" required
+                               class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                               placeholder="e.g., My Work Calendar, Client A Calendar">
+                    </div>
+                    <div>
+                        <label for="preferredTimes_${jobCount}" class="block text-sm font-medium text-gray-700 mb-1">Preferred Meeting Times / Availability for this Job</label>
+                        <textarea id="preferredTimes_${jobCount}" name="preferredTimes_${jobCount}" rows="3"
+                                  class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                  placeholder="e.g., M-F 9 AM - 12 PM, T/Th afternoons, avoid Fridays"></textarea>
+                    </div>
+                    ${jobCount > 0 ? '<button type="button" class="remove-job-btn mt-2 bg-red-500 text-white py-1 px-3 rounded-md hover:bg-red-600 text-sm">Remove Job</button>' : ''}
+                `;
+                jobsContainer.appendChild(newJobItem);
+                jobCount++;
+
+                // Add event listener for the new remove button
+                if (jobCount > 1) { // Only add listener if there's a remove button (i.e., not the first job)
+                    const removeBtn = newJobItem.querySelector('.remove-job-btn');
+                    if (removeBtn) {
+                        removeBtn.addEventListener('click', () => {
+                            newJobItem.remove();
+                            // Optionally re-index job numbers, though not strictly necessary for data collection
+                        });
+                    }
+                }
+            };
+
+            addJobBtn.addEventListener('click', addJobBlock);
+
+            // Handle form submission
+            onboardingForm.addEventListener('submit', (event) => {
+                event.preventDefault(); // Prevent default form submission
+
+                const formData = new FormData(onboardingForm);
+                const data = {};
+
+                // Get general user info
+                data.userName = formData.get('userName');
+                data.conflictTolerance = formData.get('conflictTolerance');
+                data.notificationPreferences = [];
+                formData.getAll('notificationPreference').forEach(pref => {
+                    data.notificationPreferences.push(pref);
+                });
+
+                // Get job-specific data
+                data.jobs = [];
+                document.querySelectorAll('.job-item').forEach((jobItem, index) => {
+                    const jobData = {
+                        jobName: jobItem.querySelector(`[name="jobName_${index}"]`).value,
+                        calendarName: jobItem.querySelector(`[name="calendarName_${index}"]`).value,
+                        preferredTimes: jobItem.querySelector(`[name="preferredTimes_${index}"]`).value
+                    };
+                    data.jobs.push(jobData);
+                });
+
+                // Display the collected data (for demonstration)
+                outputContent.textContent = JSON.stringify(data, null, 2);
+                formDataOutput.classList.remove('hidden');
+
+                // In a real n8n scenario, you would send this 'data' object
+                // to an n8n Webhook. For example:
+                fetch('https://omnis-systems.app.n8n.cloud/webhook/5c6591d2-4200-47e3-a240-e2a4dfeb325c', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                })
+                .then(response => response.json())
+                .then(result => {
+                    console.log('Success:', result);
+                    // Provide feedback to the user, e.g., "Setup successful! Check your Telegram for the next step."
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    // Handle errors, e.g., "Something went wrong. Please try again."
+                });
+            });
+        });
+    </script>
+</body>
+</html>
