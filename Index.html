@@ -219,17 +219,33 @@
                     },
                     body: JSON.stringify(data)
                 })
-                .then(response => response.json())
-                .then(result => {
-                    console.log('Success:', result);
-                    // Provide feedback to the user, e.g., "Setup successful! Check your Telegram for the next step."
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    // Handle errors, e.g., "Something went wrong. Please try again."
-                });
-            });
-        });
+              .then(response => {
+    // Check if the response was successful (HTTP 200-299)
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response.json(); // Parse the JSON response from n8n
+})
+.then(result => {
+    console.log('Success from n8n:', result);
+    // Display the success message from n8n
+    outputContent.innerHTML = `<p class="text-green-600 font-semibold">${result.message}</p>`;
+    // Optionally, hide the form or show a final success state
+    onboardingForm.reset(); // Clear the form fields
+    // You might want to hide the form entirely and just show the message:
+    // onboardingForm.style.display = 'none';
+    formDataOutput.classList.remove('hidden'); // Make sure the output div is visible
+    formDataOutput.style.borderColor = '#10B981'; // Green border for success
+    formDataOutput.style.backgroundColor = '#ECFDF5'; // Light green background
+})
+.catch(error => {
+    console.error('Error sending data to n8n:', error);
+    // Display an error message to the user
+    outputContent.innerHTML = `<p class="text-red-600 font-semibold">Error: ${error.message}. Please try again or contact support.</p>`;
+    formDataOutput.classList.remove('hidden'); // Make sure the output div is visible
+    formDataOutput.style.borderColor = '#EF4444'; // Red border for error
+    formDataOutput.style.backgroundColor = '#FEF2F2'; // Light red background
+});
     </script>
 </body>
 </html>
